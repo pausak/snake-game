@@ -76,4 +76,29 @@ window.addEventListener('keydown', e => {
   if (e.key === 'd' && direction.x === 0) direction = {x: 1, y: 0};
 });
 
+// Swipe controls for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+
+window.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+
+window.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+
+  // Horizontal swipe
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0 && direction.x === 0) direction = {x: 1, y: 0}; // swipe right
+    if (dx < 0 && direction.x === 0) direction = {x: -1, y: 0}; // swipe left
+  } 
+  // Vertical swipe
+  else {
+    if (dy > 0 && direction.y === 0) direction = {x: 0, y: 1}; // swipe down
+    if (dy < 0 && direction.y === 0) direction = {x: 0, y: -1}; // swipe up
+  }
+});
+
 gameLoop();
