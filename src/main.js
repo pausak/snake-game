@@ -13,6 +13,11 @@ function resize() {
   canvas.height = height;
   cols = Math.floor(width / gridSize);
   rows = Math.floor(height / gridSize);
+
+  // ✅ Auto-respawn food if it's outside new bounds
+  if (food.x >= cols || food.y >= rows) {
+    spawnFood();
+  }
 }
 window.addEventListener('resize', resize);
 resize();
