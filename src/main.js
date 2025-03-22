@@ -99,12 +99,6 @@ function updateGame() {
   snake.unshift(head);
   if (head.x === food.x && head.y === food.y) {
     spawnFood();
-    
-    // Trigger mobile haptic feedback
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-    
   } else {
     snake.pop();
   }
