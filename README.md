@@ -3,14 +3,14 @@
 
 A simple fullscreen Snake game inspired by the classic Nokia version. Built with Vanilla JavaScript and Vite. Playable on both desktop and mobile browsers.
 
-## 🎮 Features
+## Features
 
 - Classic Snake mechanics
 - Fullscreen canvas
 - Supports keyboard (desktop) and swipe input (mobile)
 - Built with Vite for fast development and optimized builds
 
-## 🚀 Getting Started
+## Getting Started
 
 1. Clone the repo
 
@@ -33,7 +33,7 @@ npm run dev
 
 Open `http://localhost:5173` in your browser to play.
 
-## 🌩️ Deploy to Cloudflare Pages
+## Deploy to Cloudflare Pages
 
 ### Prerequisites:
 - A [Cloudflare account](https://dash.cloudflare.com/)
@@ -57,14 +57,14 @@ git push -u origin main
    - **Build command:** `npm run build`
    - **Output directory:** `dist`
 
-5. Click **"Deploy"** 🎉
+5. Click **"Deploy"**
 
 Cloudflare will build and deploy your game to a unique URL like:  
 `https://your-subdomain.pages.dev`
 
-### 🔄 On future changes:
+### On future changes:
 Every `git push` to the main branch will trigger an automatic redeploy on Cloudflare Pages.
 
-## 📄 License
+## License
 
 MIT License
