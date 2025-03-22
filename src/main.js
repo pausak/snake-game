@@ -20,7 +20,8 @@ let food = {};
 let gameOver = false;
 let isPaused = false;
 
-const safeZoneSize = 100;
+// Define no-go zone height (bottom UI region)
+const uiZoneHeight = 80;
 
 // -------- PAUSE/PLAY BUTTON (bottom-left) --------
 const pauseBtn = document.createElement('div');
@@ -54,11 +55,11 @@ function styleButton(btn) {
   btn.style.position = 'fixed';
   btn.style.bottom = '20px';
   btn.style.padding = '8px 16px';
-  btn.style.border = '1px solid white';
+  btn.style.border = '1px solid grey';
   btn.style.borderRadius = '5px';
   btn.style.fontFamily = 'Arial, sans-serif';
   btn.style.fontSize = '12px';
-  btn.style.color = 'white';
+  btn.style.color = 'grey';
   btn.style.cursor = 'pointer';
   btn.style.userSelect = 'none';
   btn.style.textTransform = 'uppercase';
@@ -78,24 +79,20 @@ function gameLoop() {
 function spawnFood() {
   do {
     food.x = Math.floor(Math.random() * (width / gridSize));
-    food.y = Math.floor(Math.random() * (height / gridSize));
-  } while (inSafeZone(food.x * gridSize, food.y * gridSize));
+    food.y = Math.floor(Math.random() * ((height - uiZoneHeight) / gridSize));
+  } while (false); // no additional safe zones needed now
 }
 spawnFood();
 
-function inSafeZone(x, y) {
-  return (
-    (x < safeZoneSize && y > height - safeZoneSize) ||
-    (x > width - safeZoneSize && y > height - safeZoneSize)
-  );
-}
-
+// -------- GAME UPDATE --------
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+  // Prevent snake from entering bottom UI zone
   if (head.x < 0) head.x = Math.floor(width / gridSize) - 1;
-  if (head.y < 0) head.y = Math.floor(height / gridSize) - 1;
+  if (head.y < 0) head.y = Math.floor((height - uiZoneHeight) / gridSize) - 1;
   if (head.x >= Math.floor(width / gridSize)) head.x = 0;
-  if (head.y >= Math.floor(height / gridSize)) head.y = 0;
+  if (head.y >= Math.floor((height - uiZoneHeight) / gridSize)) head.y = 0;
 
   for (let segment of snake) {
     if (segment.x === head.x && segment.y === head.y) {
@@ -110,7 +107,7 @@ function updateGame() {
     snake.pop();
   }
 
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, width, height - uiZoneHeight);
   ctx.fillStyle = 'lime';
   for (let s of snake) {
     ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 2, gridSize - 2);
