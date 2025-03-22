@@ -20,9 +20,7 @@ let food = {};
 let gameOver = false;
 let isPaused = false;
 
-const uiZoneHeight = 80;
-
-// Pause/play buttons
+// Pause/play button
 const pauseBtn = document.createElement('div');
 styleButton(pauseBtn);
 pauseBtn.style.left = '20px';
@@ -36,7 +34,7 @@ pauseBtn.onclick = () => {
     : '<i class="fas fa-pause"></i>';
 };
 
-// Refresh/confirm buttons
+// Refresh/confirm button
 const refreshBtn = document.createElement('div');
 styleButton(refreshBtn);
 refreshBtn.style.right = '20px';
@@ -67,7 +65,7 @@ function styleButton(btn) {
   btn.style.fontSize = '14px';
 }
 
-// Gameloop
+// Game loop
 function gameLoop() {
   if (!isPaused && !gameOver) {
     updateGame();
@@ -78,20 +76,19 @@ function gameLoop() {
 }
 
 function spawnFood() {
-  do {
-    food.x = Math.floor(Math.random() * (width / gridSize));
-    food.y = Math.floor(Math.random() * ((height - uiZoneHeight) / gridSize));
-  } while (false);
+  food.x = Math.floor(Math.random() * (width / gridSize));
+  food.y = Math.floor(Math.random() * (height / gridSize));
 }
 spawnFood();
 
+// Game update
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
   if (head.x < 0) head.x = Math.floor(width / gridSize) - 1;
-  if (head.y < 0) head.y = Math.floor((height - uiZoneHeight) / gridSize) - 1;
+  if (head.y < 0) head.y = Math.floor(height / gridSize) - 1;
   if (head.x >= Math.floor(width / gridSize)) head.x = 0;
-  if (head.y >= Math.floor((height - uiZoneHeight) / gridSize)) head.y = 0;
+  if (head.y >= Math.floor(height / gridSize)) head.y = 0;
 
   for (let segment of snake) {
     if (segment.x === head.x && segment.y === head.y) {
@@ -106,7 +103,7 @@ function updateGame() {
     snake.pop();
   }
 
-  ctx.clearRect(0, 0, width, height - uiZoneHeight);
+  ctx.clearRect(0, 0, width, height);
   ctx.fillStyle = 'lime';
   for (let s of snake) {
     ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize - 2, gridSize - 2);
