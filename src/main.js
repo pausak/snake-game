@@ -4,7 +4,6 @@ const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 
-// Overlay for fade effect
 const overlay = document.createElement('div');
 overlay.style.position = 'fixed';
 overlay.style.top = 0;
@@ -22,13 +21,13 @@ let cols, rows;
 
 let snake = [{ x: 10, y: 10 }];
 let direction = { x: 1, y: 0 };
-let food = { x: 0, y: 0 };
+let food = { x: -1, y: -1 }; // initialize to off-screen
 let gameOver = false;
 let isPaused = false;
 
-// Resize + fade-in/out
+// Resize + fade transition
 function resize() {
-  overlay.style.opacity = '0.4'; // fade out
+  overlay.style.opacity = '0.4';
   setTimeout(() => {
     width = window.innerWidth;
     height = window.innerHeight;
@@ -42,15 +41,16 @@ function resize() {
       y: Math.min(segment.y, rows - 1)
     }));
 
-    if (food.x >= cols || food.y >= rows) {
+    // If food is out of bounds or uninitialized
+    if (food.x >= cols || food.y >= rows || food.x < 0 || food.y < 0) {
       spawnFood();
     }
 
-    overlay.style.opacity = '0'; // fade back in
+    overlay.style.opacity = '0';
   }, 200);
 }
 window.addEventListener('resize', resize);
-resize();
+resize(); // initial call triggers spawnFood()
 
 // Pause/play button
 const pauseBtn = document.createElement('div');
@@ -111,13 +111,11 @@ function spawnFood() {
   food.x = Math.floor(Math.random() * cols);
   food.y = Math.floor(Math.random() * rows);
 }
-spawnFood();
 
 // Game update
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  // Wraparound
   if (head.x < 0) head.x = cols - 1;
   if (head.y < 0) head.y = rows - 1;
   if (head.x >= cols) head.x = 0;
