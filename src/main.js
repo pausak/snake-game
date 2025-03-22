@@ -4,6 +4,19 @@ const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 
+// Overlay for fade effect
+const overlay = document.createElement('div');
+overlay.style.position = 'fixed';
+overlay.style.top = 0;
+overlay.style.left = 0;
+overlay.style.width = '100%';
+overlay.style.height = '100%';
+overlay.style.background = 'black';
+overlay.style.opacity = '0';
+overlay.style.pointerEvents = 'none';
+overlay.style.transition = 'opacity 0.3s ease';
+document.body.appendChild(overlay);
+
 let width, height, gridSize = 20;
 let cols, rows;
 
@@ -13,25 +26,28 @@ let food = { x: 0, y: 0 };
 let gameOver = false;
 let isPaused = false;
 
-// Resize + bounds check
+// Resize + fade-in/out
 function resize() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  cols = Math.floor(width / gridSize);
-  rows = Math.floor(height / gridSize);
+  overlay.style.opacity = '0.4'; // fade out
+  setTimeout(() => {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    cols = Math.floor(width / gridSize);
+    rows = Math.floor(height / gridSize);
 
-  // Clamp snake segments inside new bounds
-  snake = snake.map(segment => ({
-    x: Math.min(segment.x, cols - 1),
-    y: Math.min(segment.y, rows - 1)
-  }));
+    snake = snake.map(segment => ({
+      x: Math.min(segment.x, cols - 1),
+      y: Math.min(segment.y, rows - 1)
+    }));
 
-  // Clamp or respawn food
-  if (food.x >= cols || food.y >= rows) {
-    spawnFood();
-  }
+    if (food.x >= cols || food.y >= rows) {
+      spawnFood();
+    }
+
+    overlay.style.opacity = '0'; // fade back in
+  }, 200);
 }
 window.addEventListener('resize', resize);
 resize();
@@ -117,7 +133,6 @@ function updateGame() {
   if (head.x === food.x && head.y === food.y) {
     spawnFood();
 
-    // Mobile haptic feedback
     if (window.TapticEngine) {
       window.TapticEngine.impact({ style: 'medium' });
     } else if (navigator.vibrate) {
