@@ -53,7 +53,7 @@ git push -u origin main
 3. Connect your GitHub repository and select the `snake-game` repo.
 
 4. In the setup, choose:
-   - **Framework preset:** `Vite`
+   - **Framework preset:** `None`
    - **Build command:** `npm run build`
    - **Output directory:** `dist`
 
