@@ -6,6 +6,14 @@ const ctx = canvas.getContext('2d');
 
 let width, height, gridSize = 20;
 let cols, rows;
+
+let snake = [{ x: 10, y: 10 }];
+let direction = { x: 1, y: 0 };
+let food = { x: 0, y: 0 };
+let gameOver = false;
+let isPaused = false;
+
+// Resize + bounds check
 function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
@@ -14,19 +22,19 @@ function resize() {
   cols = Math.floor(width / gridSize);
   rows = Math.floor(height / gridSize);
 
-  // ✅ Auto-respawn food if it's outside new bounds
+  // Clamp snake segments inside new bounds
+  snake = snake.map(segment => ({
+    x: Math.min(segment.x, cols - 1),
+    y: Math.min(segment.y, rows - 1)
+  }));
+
+  // Clamp or respawn food
   if (food.x >= cols || food.y >= rows) {
     spawnFood();
   }
 }
 window.addEventListener('resize', resize);
 resize();
-
-let snake = [{ x: 10, y: 10 }];
-let direction = { x: 1, y: 0 };
-let food = {};
-let gameOver = false;
-let isPaused = false;
 
 // Pause/play button
 const pauseBtn = document.createElement('div');
