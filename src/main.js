@@ -5,11 +5,14 @@ document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 
 let width, height, gridSize = 20;
+let cols, rows;
 function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
   canvas.width = width;
   canvas.height = height;
+  cols = Math.floor(width / gridSize);
+  rows = Math.floor(height / gridSize);
 }
 window.addEventListener('resize', resize);
 resize();
@@ -76,8 +79,8 @@ function gameLoop() {
 }
 
 function spawnFood() {
-  food.x = Math.floor(Math.random() * (width / gridSize));
-  food.y = Math.floor(Math.random() * (height / gridSize));
+  food.x = Math.floor(Math.random() * cols);
+  food.y = Math.floor(Math.random() * rows);
 }
 spawnFood();
 
@@ -85,10 +88,11 @@ spawnFood();
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  if (head.x < 0) head.x = Math.floor(width / gridSize) - 1;
-  if (head.y < 0) head.y = Math.floor(height / gridSize) - 1;
-  if (head.x >= Math.floor(width / gridSize)) head.x = 0;
-  if (head.y >= Math.floor(height / gridSize)) head.y = 0;
+  // Wraparound
+  if (head.x < 0) head.x = cols - 1;
+  if (head.y < 0) head.y = rows - 1;
+  if (head.x >= cols) head.x = 0;
+  if (head.y >= rows) head.y = 0;
 
   for (let segment of snake) {
     if (segment.x === head.x && segment.y === head.y) {
@@ -99,6 +103,13 @@ function updateGame() {
   snake.unshift(head);
   if (head.x === food.x && head.y === food.y) {
     spawnFood();
+
+    // Mobile haptic feedback
+    if (window.TapticEngine) {
+      window.TapticEngine.impact({ style: 'medium' });
+    } else if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
   } else {
     snake.pop();
   }
