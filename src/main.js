@@ -1,9 +1,11 @@
 import './style.css';
 
+// Create canvas
 const canvas = document.createElement('canvas');
 document.body.appendChild(canvas);
 const ctx = canvas.getContext('2d');
 
+// Canvas sizing
 let width, height, gridSize = 20;
 function resize() {
   width = window.innerWidth;
@@ -14,10 +16,12 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-let snake = [{x: 10, y: 10}];
-let direction = {x: 1, y: 0};
+// Snake state
+let snake = [{ x: 10, y: 10 }];
+let direction = { x: 1, y: 0 };
 let food = {};
 let gameOver = false;
+let isPaused = false;
 
 function spawnFood() {
   food.x = Math.floor(Math.random() * (width / gridSize));
@@ -25,19 +29,85 @@ function spawnFood() {
 }
 spawnFood();
 
+// HUD: Players Count
+const hud = document.createElement('div');
+hud.style.position = 'fixed';
+hud.style.bottom = '10px';
+hud.style.right = '10px';
+hud.style.color = 'white';
+hud.style.fontSize = '12px';
+hud.style.fontFamily = 'Arial, sans-serif';
+hud.style.userSelect = 'none';
+hud.innerText = 'PLAYERS: 1';
+document.body.appendChild(hud);
+
+// Pause Button
+const pauseButton = document.createElement('button');
+pauseButton.innerText = '⏸ Pause';
+pauseButton.style.position = 'fixed';
+pauseButton.style.bottom = '10px';
+pauseButton.style.left = '10px';
+pauseButton.style.padding = '8px 12px';
+pauseButton.style.fontSize = '12px';
+pauseButton.style.cursor = 'pointer';
+pauseButton.style.fontFamily = 'Arial, sans-serif';
+pauseButton.style.background = '#222';
+pauseButton.style.color = '#fff';
+pauseButton.style.border = '1px solid #444';
+pauseButton.style.borderRadius = '4px';
+pauseButton.style.userSelect = 'none';
+document.body.appendChild(pauseButton);
+
+// Pause toggle
+pauseButton.addEventListener('click', () => {
+  isPaused = !isPaused;
+  pauseButton.innerText = isPaused ? '▶️ Resume' : '⏸ Pause';
+});
+
+// Keyboard controls
+window.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp' && direction.y === 0) direction = { x: 0, y: -1 };
+  if (e.key === 'ArrowDown' && direction.y === 0) direction = { x: 0, y: 1 };
+  if (e.key === 'ArrowLeft' && direction.x === 0) direction = { x: -1, y: 0 };
+  if (e.key === 'ArrowRight' && direction.x === 0) direction = { x: 1, y: 0 };
+  if (e.key === 'w' && direction.y === 0) direction = { x: 0, y: -1 };
+  if (e.key === 's' && direction.y === 0) direction = { x: 0, y: 1 };
+  if (e.key === 'a' && direction.x === 0) direction = { x: -1, y: 0 };
+  if (e.key === 'd' && direction.x === 0) direction = { x: 1, y: 0 };
+});
+
+// Swipe controls for mobile
+let touchStartX = 0;
+let touchStartY = 0;
+window.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+window.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 0 && direction.x === 0) direction = { x: 1, y: 0 };
+    if (dx < 0 && direction.x === 0) direction = { x: -1, y: 0 };
+  } else {
+    if (dy > 0 && direction.y === 0) direction = { x: 0, y: 1 };
+    if (dy < 0 && direction.y === 0) direction = { x: 0, y: -1 };
+  }
+});
+
+// Game Loop
 function gameLoop() {
-  if (gameOver) {
-    ctx.fillStyle = 'red';
-    ctx.font = '40px Arial';
-    ctx.fillText('Game Over', width / 2 - 100, height / 2);
-    return;
+  if (!isPaused && !gameOver) {
+    updateGame();
   }
 
   setTimeout(() => {
     requestAnimationFrame(gameLoop);
   }, 100);
+}
 
-  const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+function updateGame() {
+  const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
   if (head.x < 0) head.x = Math.floor(width / gridSize) - 1;
   if (head.y < 0) head.y = Math.floor(height / gridSize) - 1;
   if (head.x >= Math.floor(width / gridSize)) head.x = 0;
@@ -64,41 +134,5 @@ function gameLoop() {
   ctx.fillStyle = 'red';
   ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
 }
-
-window.addEventListener('keydown', e => {
-  if (e.key === 'ArrowUp' && direction.y === 0) direction = {x: 0, y: -1};
-  if (e.key === 'ArrowDown' && direction.y === 0) direction = {x: 0, y: 1};
-  if (e.key === 'ArrowLeft' && direction.x === 0) direction = {x: -1, y: 0};
-  if (e.key === 'ArrowRight' && direction.x === 0) direction = {x: 1, y: 0};
-  if (e.key === 'w' && direction.y === 0) direction = {x: 0, y: -1};
-  if (e.key === 's' && direction.y === 0) direction = {x: 0, y: 1};
-  if (e.key === 'a' && direction.x === 0) direction = {x: -1, y: 0};
-  if (e.key === 'd' && direction.x === 0) direction = {x: 1, y: 0};
-});
-
-// Swipe controls for mobile
-let touchStartX = 0;
-let touchStartY = 0;
-
-window.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-});
-
-window.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-
-  // Horizontal swipe
-  if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 0 && direction.x === 0) direction = {x: 1, y: 0}; // swipe right
-    if (dx < 0 && direction.x === 0) direction = {x: -1, y: 0}; // swipe left
-  } 
-  // Vertical swipe
-  else {
-    if (dy > 0 && direction.y === 0) direction = {x: 0, y: 1}; // swipe down
-    if (dy < 0 && direction.y === 0) direction = {x: 0, y: -1}; // swipe up
-  }
-});
 
 gameLoop();
