@@ -22,7 +22,7 @@ let isPaused = false;
 
 const uiZoneHeight = 80;
 
-// -------- PAUSE/PLAY BUTTON (bottom-left) --------
+// Pause/play buttons
 const pauseBtn = document.createElement('div');
 styleButton(pauseBtn);
 pauseBtn.style.left = '20px';
@@ -36,7 +36,7 @@ pauseBtn.onclick = () => {
     : '<i class="fas fa-pause"></i>';
 };
 
-// -------- REFRESH/CONFIRM BUTTON (bottom-right) --------
+// Refresh/confirm buttons
 const refreshBtn = document.createElement('div');
 styleButton(refreshBtn);
 refreshBtn.style.right = '20px';
@@ -53,21 +53,21 @@ refreshBtn.onclick = () => {
   }
 };
 
-// -------- Shared Button Styling --------
+// Shared button style
 function styleButton(btn) {
   btn.style.position = 'fixed';
   btn.style.bottom = '20px';
-  btn.style.padding = '8px 16px';
+  btn.style.padding = '6px 12px';
   btn.style.border = '1px solid grey';
   btn.style.borderRadius = '5px';
   btn.style.color = 'grey';
   btn.style.cursor = 'pointer';
   btn.style.userSelect = 'none';
   btn.style.background = 'transparent';
-  btn.style.fontSize = '18px';
+  btn.style.fontSize = '14px';
 }
 
-// -------- GAME LOOP --------
+// Gameloop
 function gameLoop() {
   if (!isPaused && !gameOver) {
     updateGame();
@@ -85,7 +85,6 @@ function spawnFood() {
 }
 spawnFood();
 
-// -------- GAME UPDATE --------
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
@@ -116,7 +115,7 @@ function updateGame() {
   ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
 }
 
-// -------- CONTROLS --------
+// Controls
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowUp' && direction.y === 0) direction = { x: 0, y: -1 };
   if (e.key === 'ArrowDown' && direction.y === 0) direction = { x: 0, y: 1 };
@@ -128,7 +127,7 @@ window.addEventListener('keydown', e => {
   if (e.key === 'd' && direction.x === 0) direction = { x: 1, y: 0 };
 });
 
-// Swipe controls for mobile
+// Swipe gestures
 let touchStartX = 0;
 let touchStartY = 0;
 window.addEventListener('touchstart', e => {
