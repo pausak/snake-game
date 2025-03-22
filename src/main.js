@@ -20,32 +20,35 @@ let food = {};
 let gameOver = false;
 let isPaused = false;
 
-// Define no-go zone height (bottom UI region)
 const uiZoneHeight = 80;
 
 // -------- PAUSE/PLAY BUTTON (bottom-left) --------
 const pauseBtn = document.createElement('div');
-pauseBtn.innerText = 'PAUSE';
 styleButton(pauseBtn);
 pauseBtn.style.left = '20px';
+pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
 document.body.appendChild(pauseBtn);
 
 pauseBtn.onclick = () => {
   isPaused = !isPaused;
-  pauseBtn.innerText = isPaused ? 'PLAY' : 'PAUSE';
+  pauseBtn.innerHTML = isPaused
+    ? '<i class="fas fa-play"></i>'
+    : '<i class="fas fa-pause"></i>';
 };
 
 // -------- REFRESH/CONFIRM BUTTON (bottom-right) --------
 const refreshBtn = document.createElement('div');
-refreshBtn.innerText = 'REFRESH';
 styleButton(refreshBtn);
 refreshBtn.style.right = '20px';
+refreshBtn.dataset.state = 'refresh';
+refreshBtn.innerHTML = '<i class="fas fa-rotate-right"></i>';
 document.body.appendChild(refreshBtn);
 
 refreshBtn.onclick = () => {
-  if (refreshBtn.innerText === 'REFRESH') {
-    refreshBtn.innerText = 'CONFIRM';
-  } else if (refreshBtn.innerText === 'CONFIRM') {
+  if (refreshBtn.dataset.state === 'refresh') {
+    refreshBtn.dataset.state = 'confirm';
+    refreshBtn.innerHTML = '<i class="fas fa-check"></i>';
+  } else {
     location.reload();
   }
 };
@@ -57,13 +60,11 @@ function styleButton(btn) {
   btn.style.padding = '8px 16px';
   btn.style.border = '1px solid grey';
   btn.style.borderRadius = '5px';
-  btn.style.fontFamily = 'Arial, sans-serif';
-  btn.style.fontSize = '12px';
   btn.style.color = 'grey';
   btn.style.cursor = 'pointer';
   btn.style.userSelect = 'none';
-  btn.style.textTransform = 'uppercase';
   btn.style.background = 'transparent';
+  btn.style.fontSize = '18px';
 }
 
 // -------- GAME LOOP --------
@@ -80,7 +81,7 @@ function spawnFood() {
   do {
     food.x = Math.floor(Math.random() * (width / gridSize));
     food.y = Math.floor(Math.random() * ((height - uiZoneHeight) / gridSize));
-  } while (false); // no additional safe zones needed now
+  } while (false);
 }
 spawnFood();
 
@@ -88,7 +89,6 @@ spawnFood();
 function updateGame() {
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  // Prevent snake from entering bottom UI zone
   if (head.x < 0) head.x = Math.floor(width / gridSize) - 1;
   if (head.y < 0) head.y = Math.floor((height - uiZoneHeight) / gridSize) - 1;
   if (head.x >= Math.floor(width / gridSize)) head.x = 0;
